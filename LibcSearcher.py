@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from __future__ import print_function
 import os
 import re
@@ -7,8 +5,9 @@ import sys
 
 
 class LibcSearcher(object):
-    def __init__(self, func=None, address=None):
+    def __init__(self, func=None, address=None,choose=None):
         self.condition = {}
+        self.chosen= choose
         if func is not None and address is not None:
             self.add_condition(func, address)
         self.libc_database_path = os.path.join(
@@ -61,10 +60,15 @@ class LibcSearcher(object):
             for x in range(len(result)):
                 print("%2d: %s" % (x, self.pmore(result[x])))
             print("Please supply more info using \n\tadd_condition(leaked_func, leaked_address).")
+            if(self.chosen!=None):
+                self.db = result[self.chosen]
+                print("[+] %s be chosen." % self.pmore(self.db))
+                return
             while True:
                 in_id = input(
                     "You can choose it by hand\nOr type 'exit' to quit:")
-                if in_id == "exit" or in_id == "quit":
+                #print(in_id)
+                if in_id == "exit\n" or in_id == "quit\n":
                     sys.exit(0)
                 try:
                     in_id = int(in_id)
@@ -74,7 +78,7 @@ class LibcSearcher(object):
                     continue
         else:
             self.db = result[0]
-        print("[+] %s be choosed." % self.pmore(self.db))
+        print("[+] %s be chosen." % self.pmore(self.db))
 
     def pmore(self, result):
         result = result[:-8]  # .strip(".symbols")
